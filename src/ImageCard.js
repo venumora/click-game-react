@@ -4,22 +4,24 @@ import { width } from 'window-size';
 class ImageCard extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            clicked: false
-        }
         this.handleClick= this.handleClick.bind(this);
     }
 
     handleClick() {
-        this.setState({clicked: true});
+        if (!this.props.imgSrc.clicked) {
+            this.props.handleSuccess(this.props.index);
+        } else {
+            this.props.handleFail();            
+        }
     }
 
     render() {
         return (
             <div className="col s3 images">
                 <div className="card">
-                    <div onClick={this.handleClick} className="card-image waves-effect waves-block waves-light">
-                        <img className="activator" src={this.props.imgSrc} alt={this.props.imgAlt} />
+                    <div onClick={this.handleClick}
+                         className="card-image waves-effect waves-block waves-light">
+                        <img className="activator" src={this.props.imgSrc.image} alt={this.props.imgAlt} />
                     </div>
                 </div>
             </div>

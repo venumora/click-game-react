@@ -19,22 +19,22 @@ import image16 from './images/17.jpg';
 import ImageCard from './ImageCard.js';
 
 const images = [
-  image1,
-  image2,
-  image3,
-  image4,
-  image5,
-  image6,
-  image7,
-  image8,
-  image9,
-  image10,
-  image11,
-  image12,
-  image13,
-  image14,
-  image15,
-  image16
+  {image:image1, clicked: false},
+  {image:image2, clicked: false},
+  {image:image3, clicked: false},
+  {image:image4, clicked: false},
+  {image:image5, clicked: false},
+  {image:image6, clicked: false},
+  {image:image7, clicked: false},
+  {image:image8, clicked: false},
+  {image:image9, clicked: false},
+  {image:image10, clicked: false},
+  {image:image11, clicked: false},
+  {image:image12, clicked: false},
+  {image:image13, clicked: false},
+  {image:image14, clicked: false},
+  {image:image15, clicked: false},
+  {image:image16, clicked: false}
 ];
 
 const adverbs = [
@@ -62,9 +62,52 @@ class App extends Component {
     super(props);
     this.state = {
       score: 0,
-      topScore: 0
+      topScore: 0,
+      images: images,
+      gameEnd: false
     }
+    this.handleFail = this.handleFail.bind(this);
+    this.handleSuccess = this.handleSuccess.bind(this);
+    this.shuffleImages = this.shuffleImages.bind(this);
   }
+
+  shuffleImages(images) {
+    let i = 0, j = 0, temp = null;
+
+    for (i = images.length - 1; i > 0; i -= 1) {
+      j = Math.floor(Math.random() * (i + 1))
+      temp = images[i]
+      images[i] = images[j]
+      images[j] = temp
+    }
+
+    return images;
+  }
+
+  handleSuccess(index) {
+    const score = this.state.score + 1;
+    let topScore = this.state.topScore;
+    let images = this.state.images;
+    const gameEnd = false;
+    images[index].clicked = true;
+
+    if (topScore < score) {
+      topScore = score;
+    }
+
+    images = this.shuffleImages(images);
+
+    this.setState({ topScore, score, images, gameEnd });
+  }
+
+  handleFail() {
+    let images = this.state.images;
+    images.forEach(image => {
+      image.clicked = false
+    });
+    this.setState({ gameEnd: true, score: 0, images: images });
+  }
+
   render() {
     return (
       <div>
@@ -82,11 +125,18 @@ class App extends Component {
             </div>
           </nav>
         </div>
-        <div className="container">
+        <div className={`container ${this.state.gameEnd ? 'gameend' : ''}`}>
           <div class="row">
             {
-              images.map((image, index) => {
-                return <ImageCard key={index} imgSrc={image} imgAlt={Math.random().toString(36).substring(7)} />;
+              this.state.images.map((image, index) => {
+                return <ImageCard
+                  key={index}
+                  imgSrc={image}
+                  imgAlt={Math.random().toString(36).substring(7)}
+                  handleSuccess={this.handleSuccess}
+                  handleFail={this.handleFail}
+                  index={index}
+                />;
               })
             }
           </div>
